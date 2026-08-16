@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "eltako-modbus"
 version = "0.1.0"
-description = "Read an Eltako DSZ15DZMOD three-phase energy meter over Modbus RTU."
+description = "Read an Eltako DSZ15DZMOD three-phase energy meter over Modbus."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
@@ -45,4 +45,4 @@ select = ["E", "F", "W", "I", "UP", "B"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "tests"]
+files = ["src", "tests", "script"]
