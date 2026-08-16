@@ -1,4 +1,4 @@
-"""eltako-modbus — read an Eltako DSZ15DZMOD energy meter over Modbus RTU.
+"""eltako-modbus — read an Eltako DSZ15DZMOD energy meter over Modbus.
 
 Construct ``Dsz15dzmod(unit)`` with a ``modbus_connection.ModbusUnit``, call
 ``await meter.async_update()``, then read the values as plain attributes::

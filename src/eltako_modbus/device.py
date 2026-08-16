@@ -19,7 +19,7 @@ class Dsz15dzmod:
     """An Eltako DSZ15DZMOD three-phase energy meter.
 
     Takes a :class:`~modbus_connection.ModbusUnit`; the caller owns the
-    connection. The meter speaks Modbus RTU at 9600 baud by default.
+    connection, over a serial line or through a Modbus TCP gateway.
     """
 
     manufacturer = MANUFACTURER

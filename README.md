@@ -1,17 +1,22 @@
 # eltako-modbus
 
-Read an **Eltako DSZ15DZMOD** three-phase energy meter over Modbus RTU.
+Read an **Eltako DSZ15DZMOD** three-phase energy meter over Modbus.
 
 The DSZ15DZMOD (sold as the DSZ15DZMOD-3x80A) is a DIN-rail three-phase kWh
-meter with an RS-485 Modbus interface — 9600 baud, 8 data bits, 1 stop bit, no
-parity by default. It reports per-phase voltage, current, active power and power
-factor, the three-phase totals, and four energy counters. It is Eltako's only
-Modbus meter; the rest of the DSZ/WSZ range is S0-pulse or EnOcean.
+meter. It reports per-phase voltage, current, active power and power factor, the
+three-phase totals, and four energy counters. It is Eltako's only Modbus meter;
+the rest of the DSZ/WSZ range is S0-pulse or EnOcean.
 
 This is a device library built on
 [modbus-connection](https://github.com/balloob/modbus-connection). It takes a
 `ModbusUnit` and never opens a connection of its own — the consumer owns the
-link.
+link, and so chooses the transport.
+
+The meter itself speaks Modbus RTU on RS-485, at 9600 baud, 8 data bits, 1 stop
+bit and no parity unless it has been reconfigured. Reach it over a serial
+adapter with those line settings, or over TCP through a gateway such as Eltako's
+ZGW16WL-IP, which fronts up to sixteen of these meters. Nothing in this library
+depends on which of the two you use.
 
 ## Install
 
@@ -31,7 +36,6 @@ from eltako_modbus import Dsz15dzmod
 
 
 async def main() -> None:
-    # 9600 8N1 RTU are the defaults, and are what the meter ships with.
     connection = ModbusConnection(ModbusSerialParams(device="/dev/ttyUSB0"))
     try:
         meter = Dsz15dzmod(connection.for_unit(1))
@@ -47,10 +51,18 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+Behind a gateway the only line that changes is the connection:
+
+```python
+from modbus_connection import ModbusTcpParams
+
+connection = ModbusConnection(ModbusTcpParams(host="192.168.1.50", port=502))
+```
+
 One `Dsz15dzmod` models one meter, so build one per unit id. That is the normal
-deployment rather than the exotic one: Eltako's ZGW16WL-IP gateway fronts up to
-sixteen of these meters, which reach the consumer as sixteen unit ids on a
-single connection.
+deployment rather than the exotic one: the ZGW16WL-IP fronts up to sixteen of
+these meters, which reach the consumer as sixteen unit ids on a single
+connection.
 
 ```python
 meters = {unit_id: Dsz15dzmod(connection.for_unit(unit_id)) for unit_id in range(1, 17)}

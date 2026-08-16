@@ -3,7 +3,7 @@
 The DSZ15DZMOD has one measurement block and no optional parts, so this is a
 single component rather than a phase/total/energy split: the values share a
 space, are always all present, and cannot fail independently of one another.
-Splitting them would only buy extra round trips on a 9600-baud bus.
+Splitting them would only buy extra round trips on a slow serial line.
 
 Addresses and units are spec §3.1; names keep the spec's wording. Voltages are
 line-to-neutral.
