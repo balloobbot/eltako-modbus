@@ -16,7 +16,6 @@ from .device import MANUFACTURER, MODEL, Dsz15dzmod
 from .enums import BaudRate
 from .identity import SERIAL_ADDRESS, Identity
 from .measurements import Measurements
-from .model import UpdateReport
 from .parameters import ADDRESS_MAX, ADDRESS_MIN, Parameters
 
 __all__ = [
@@ -30,5 +29,4 @@ __all__ = [
     "Identity",
     "Measurements",
     "Parameters",
-    "UpdateReport",
 ]

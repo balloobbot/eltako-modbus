@@ -23,7 +23,7 @@ async def test_a_poll_costs_three_reads(
     the whole span in one would cost a single 100-register read the spec does
     not license, since it never says the meter answers for the holes.
     """
-    await meter.async_update()  # first poll: setup reads the identity block
+    await meter.async_update()  # first poll: setup reads the fixed blocks
     mock_modbus_unit.read_events.clear()
 
     await meter.async_update()
@@ -37,14 +37,18 @@ async def test_a_poll_costs_three_reads(
     assert len(blocks) == 3
 
 
-async def test_setup_adds_one_read_to_the_first_poll_only(
+async def test_setup_reads_the_fixed_blocks_once(
     meter: Dsz15dzmod, mock_modbus_unit: MockModbusUnit
 ) -> None:
-    """The identity block is four contiguous registers, read once."""
+    """Three holding reads on the first poll, none on any after it."""
     await meter.async_update()
 
-    identity = [b for b in mock_modbus_unit.read_events if b.register_type == "holding"]
-    assert [(b.address, b.count) for b in identity] == [(0xFC00, 4)]
+    fixed = [b for b in mock_modbus_unit.read_events if b.register_type == "holding"]
+    assert [(b.address, b.count) for b in fixed] == [
+        (0xFC00, 4),  # identity
+        (0x0012, 12),  # stop bit, address, baud rate
+        (0x0056, 2),  # pulse mode
+    ]
 
     mock_modbus_unit.read_events.clear()
     await meter.async_update()

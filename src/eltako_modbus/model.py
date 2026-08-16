@@ -1,4 +1,4 @@
-"""Field presets for the DSZ15DZMOD's uniform 32-bit layout, and the poll report.
+"""Field presets for the DSZ15DZMOD's uniform 32-bit layout.
 
 Every value the meter exposes — measurement or parameter — is 4 bytes across two
 consecutive registers, high word in the lower address (spec §1.2.2 and §3.1
@@ -9,9 +9,6 @@ spec states in §3.1 remark 1.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-from modbus_connection import ModbusError
 from modbus_connection.model import NumberField, WriteValidator
 
 
@@ -50,21 +47,3 @@ def unscaled(
     states no scale and every documented value is a small count or code.
     """
     return NumberField[int](address, count=2, signed=False, writable=writable)
-
-
-@dataclass(frozen=True)
-class UpdateReport:
-    """What one poll refreshed, by the device's component attribute names.
-
-    A failed component kept its previous values and did not notify; the error
-    that failed it rides along. A dead link is never in here — the update
-    raises ``ModbusConnectionError`` instead of reporting partial silence.
-    """
-
-    updated: set[str]
-    failed: dict[str, ModbusError]
-
-    @property
-    def complete(self) -> bool:
-        """Whether every polled component refreshed."""
-        return not self.failed

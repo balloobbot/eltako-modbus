@@ -70,12 +70,10 @@ async def test_a_serial_that_is_not_bcd_decodes_to_none(
     assert meter.identity.serial_number is None
 
 
-async def test_parameters_are_not_part_of_a_poll(meter: Dsz15dzmod) -> None:
-    """They change only when written, so the consumer refreshes them itself."""
+async def test_the_parameters_are_read_at_setup(meter: Dsz15dzmod) -> None:
+    """They are read-only but for the address, so one read covers the meter's life."""
     await meter.async_update()
-    assert meter.parameters.baud_rate is None
 
-    await meter.parameters.async_update()
     assert meter.parameters.baud_rate is BaudRate.BPS_9600
     assert meter.parameters.communication_address == 204
     assert meter.parameters.communication_check_and_stop_bit == 0

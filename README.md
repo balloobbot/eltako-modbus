@@ -61,21 +61,20 @@ meters = {unit_id: Dsz15dzmod(connection.for_unit(unit_id)) for unit_id in range
 | Component | Space | Contents | Polled |
 | --- | --- | --- | --- |
 | `measurements` | input (FC04) | Voltages, currents, active power, power factors, totals, energy counters | every `async_update()` |
-| `parameters` | holding (FC03/FC16) | Communication address, baud rate, stop bit, pulse mode | on your own schedule |
+| `parameters` | holding (FC03/FC16) | Communication address, baud rate, stop bit, pulse mode | once, at setup |
 | `identity` | holding (FC03) | Serial number, meter code | once, at setup |
 
-The meter has one measurement block and no optional parts, so the readings are
-one component rather than a phase/total/energy split: they share a space, are
-always all present, and cannot fail independently. The settings are separate
-because they change only when written — a poll would pay for them every cycle
-for nothing — and the identity is separate because it sits 64512 registers away
-at 0xFC00 and is read once.
+The readings are one component rather than a phase/total/energy split: they
+share a space, are always all present, and cannot fail independently. The
+settings and the identity are read once at setup — every one of them is
+read-only but the communication address, and writing that changes the address
+you are talking to.
 
 A poll costs **three requests**: the planner merges fields within 16 registers
 of each other, so the small documented holes are read over and only the two
 wider gaps split the block (0x0000+36, 0x0034+24, 0x0060+4). The first poll adds
-one four-register read of the identity block. Refreshing the parameters costs
-two more. This is pinned in `tests/test_read_plan.py`.
+three holding reads for the identity and the settings, and no poll after it
+reads them again. This is pinned in `tests/test_read_plan.py`.
 
 `await meter.async_read_raw()` returns every register the meter serves,
 undecoded, for a diagnostics dump.
