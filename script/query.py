@@ -27,8 +27,9 @@ from modbus_connection.cli_helper import (
 from eltako_modbus import Dsz15dzmod
 
 # The meter is RS-485 RTU; over TCP it is reached through a gateway, which
-# presents it either transparently (rtu) or as native Modbus TCP (socket).
-CONNECTIONS = (("serial", "rtu"), ("tcp", "rtu"), ("tcp", "socket"))
+# presents it either transparently (rtu) or as native Modbus TCP (socket). The
+# first pair is what --transport defaults to.
+CONNECTIONS = (("tcp", "rtu"), ("tcp", "socket"), ("serial", "rtu"))
 
 
 async def main() -> int:
