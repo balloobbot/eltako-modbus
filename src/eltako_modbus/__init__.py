@@ -14,7 +14,7 @@ see the README before trusting its scale.
 
 from .device import MANUFACTURER, MODEL, Dsz15dzmod
 from .enums import BaudRate
-from .identity import SERIAL_ADDRESS, Identity
+from .identity import Identity
 from .measurements import Measurements
 from .parameters import ADDRESS_MAX, ADDRESS_MIN, Parameters
 
@@ -23,7 +23,6 @@ __all__ = [
     "ADDRESS_MIN",
     "MANUFACTURER",
     "MODEL",
-    "SERIAL_ADDRESS",
     "BaudRate",
     "Dsz15dzmod",
     "Identity",

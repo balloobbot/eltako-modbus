@@ -11,8 +11,6 @@ from modbus_connection.model import Component, NumberField
 
 from .model import unscaled
 
-SERIAL_ADDRESS = 0xFC00
-
 
 def _bcd_digits(raw: int) -> str:
     """Decode a packed-BCD word into its digits; a nibble above 9 is not BCD."""
@@ -26,7 +24,7 @@ class Identity(Component):
     """The serial number and meter code — fixed for the life of the meter."""
 
     serial_number: NumberField[str] = NumberField(
-        SERIAL_ADDRESS, count=2, signed=False, convert=_bcd_digits
+        0xFC00, count=2, signed=False, convert=_bcd_digits
     )
     """Eight BCD digits (spec §3.2). A value that is not BCD decodes to ``None``."""
 
