@@ -9,12 +9,12 @@ spec states in §3.1 remark 1.
 
 from __future__ import annotations
 
-from modbus_connection.model import NumberField, WriteValidator
+from modbus_connection.model import NumberField, WriteValidator, int32, uint32
 
 
 def scaled(address: int, *, unit: str) -> NumberField[float]:
     """An unsigned measurement with two decimals — the spec's default rule."""
-    return NumberField[float](address, count=2, scale=0.01, signed=False, unit=unit)
+    return uint32(address, scale=0.01, unit=unit)
 
 
 def power(address: int) -> NumberField[int]:
@@ -30,12 +30,12 @@ def power(address: int) -> NumberField[int]:
     exactly and hands back the raw integer unscaled; a consumer that measures
     otherwise can divide. See the README.
     """
-    return NumberField[int](address, count=2, signed=True, unit="kW")
+    return int32(address, unit="kW")
 
 
 def power_factor(address: int) -> NumberField[float]:
     """A signed power factor with three decimals."""
-    return NumberField[float](address, count=2, scale=0.001, signed=True)
+    return int32(address, scale=0.001)
 
 
 def unscaled(
@@ -46,4 +46,4 @@ def unscaled(
     §3.1's scaling remarks cover the measurements only; the parameter table
     states no scale and every documented value is a small count or code.
     """
-    return NumberField[int](address, count=2, signed=False, writable=writable)
+    return uint32(address, writable=writable)
