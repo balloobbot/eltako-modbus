@@ -1,4 +1,4 @@
-"""Decoding, identity, parameters and the read plan, over the mock backend."""
+"""The DSZ15DZMOD's decoding, identity and parameters, over the mock backend."""
 
 from __future__ import annotations
 

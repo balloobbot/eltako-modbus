@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import pytest
+from modbus_connection import ModbusTimeoutError
 from modbus_connection.mock import MockModbusUnit, WriteEvent
 
 from eltako_modbus import (
@@ -277,3 +278,17 @@ async def test_an_unknown_meter_mode_is_an_error(
     series16_unit(mock_modbus_unit, 99)
     with pytest.raises(ValueError, match="meter mode 99"):
         await async_detect_meter(mock_modbus_unit)
+
+
+async def test_setup_is_retried_after_an_unreachable_meter(
+    dsz16dz: Dsz16dz, mock_modbus_unit: MockModbusUnit
+) -> None:
+    """A failed setup latches nothing, so the identity is not lost forever."""
+    mock_modbus_unit.fail_requests(ModbusTimeoutError())
+    with pytest.raises(ModbusTimeoutError):
+        await dsz16dz.async_update()
+    assert dsz16dz.identity.serial_number is None
+
+    mock_modbus_unit.fail_requests(None)
+    await dsz16dz.async_update()
+    assert dsz16dz.identity.serial_number == SERIAL

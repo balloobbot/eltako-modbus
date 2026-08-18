@@ -1,4 +1,4 @@
-"""What a poll actually costs on the wire.
+"""What a poll of the DSZ15DZMOD actually costs on the wire.
 
 The meter sits on a 9600-baud RS-485 link, so the number of requests is the
 number that matters, and it is pinned here rather than left to drift.

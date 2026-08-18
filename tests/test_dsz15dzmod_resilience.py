@@ -1,4 +1,4 @@
-"""How a poll behaves when the meter or the link misbehaves."""
+"""How a DSZ15DZMOD poll behaves when the meter or the link misbehaves."""
 
 from __future__ import annotations
 

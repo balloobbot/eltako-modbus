@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any
 
 from modbus_connection.model import Component
 
-from .device import Dsz15dzmod
+from .dsz15dzmod import Dsz15dzmod
 from .series16 import (
     Dsz16d,
     Dsz16dz,

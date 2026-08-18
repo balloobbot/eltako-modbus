@@ -17,12 +17,17 @@ Modbus RTU on RS-485.
 | `Wsz16d` | WSZ16D | one | import | also sold as WSZ16DE |
 | `Wsz16dz` | WSZ16DZ | one | both directions | also sold as WSZ16DZE |
 
-The six DSZ16/WSZ16 meters live in `eltako_modbus.series16` and share one
-register map: per-phase voltage, current, active, apparent and reactive power,
-power factor and cosφ, the totals, frequency, and energy counters per tariff
-and per phase. The DSZ15DZMOD is modelled apart from them, because its own
-datasheet disagrees with V3.7.4 — see [Where the two specs
-disagree](#where-the-two-specs-disagree).
+There is a package per specification. The six DSZ16/WSZ16 meters live together
+in `eltako_modbus.series16` because they share one register map — per-phase
+voltage, current, active, apparent and reactive power, power factor and cosφ,
+the totals, frequency, and energy counters per tariff and per phase — and one
+set of components: they differ only in which rows of that map they answer, and
+in the two decimals of energy the transformer-connected pair drops to one. The
+DSZ15DZMOD has `eltako_modbus.dsz15dzmod` to itself, sharing nothing but the
+packed-BCD serial number, because its own datasheet disagrees with V3.7.4 — see
+[Where the two specs disagree](#where-the-two-specs-disagree). Every class is
+re-exported from `eltako_modbus` itself, so neither path is needed in normal
+use.
 
 This is a device library built on
 [modbus-connection](https://github.com/balloob/modbus-connection). It takes a
@@ -124,7 +129,7 @@ costs **two requests** — the map's holes are all narrower than the planner's
 the block — and a single-phase WSZ16 poll costs three. The DSZ15DZMOD's costs
 three. The first poll adds the holding reads for the identity and the settings,
 and no poll after it reads them again. All of this is pinned in
-`tests/test_read_plan.py` and `tests/test_series16_read_plan.py`.
+`tests/test_dsz15dzmod_read_plan.py` and `tests/test_series16_read_plan.py`.
 
 The settings a model lacks are scattered through the block rather than grouped,
 so `parameters` and `resets` are one layout narrowed per model with

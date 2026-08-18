@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from modbus_connection.model import Component, NumberField, enum, string
 
-from ..identity import _bcd_digits
+from ..bcd import bcd_digits
 from .enums import MeterMode
 from .model import unscaled
 
@@ -24,7 +24,7 @@ class Identity(Component):
     register_ranges = ((0xFC00, 0xFC03), (0xFC08, 0xFC0F))
 
     serial_number: NumberField[str] = NumberField(
-        0xFC00, count=2, signed=False, convert=_bcd_digits
+        0xFC00, count=2, signed=False, convert=bcd_digits
     )
     """Eight BCD digits. A value that is not BCD decodes to ``None``."""
 
