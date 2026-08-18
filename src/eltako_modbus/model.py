@@ -25,10 +25,11 @@ def power(address: int) -> NumberField[int]:
     believe from a meter that reports *energy* to two decimals, 10 Wh: the same
     device would resolve accumulated energy a hundred thousand times finer than
     the power producing it. The likeliest explanation is that the raw value is
-    watts and the unit column is wrong, but the spec says what it says and
-    nothing here can settle it without hardware. So this models the datasheet
-    exactly and hands back the raw integer unscaled; a consumer that measures
-    otherwise can divide. See the README.
+    watts and the unit column is wrong — Eltako's later V3.7.4 specification
+    gives this meter's own register a unit of W — but this meter's datasheet
+    says what it says, and nothing here can settle it without hardware. So this
+    models the datasheet exactly and hands back the raw integer unscaled; a
+    consumer that measures otherwise can divide. See the README.
     """
     return int32(address, unit="kW")
 

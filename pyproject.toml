@@ -5,12 +5,20 @@ build-backend = "hatchling.build"
 [project]
 name = "eltako-modbus"
 version = "0.1.0"
-description = "Read an Eltako DSZ15DZMOD three-phase energy meter over Modbus."
+description = "Read an Eltako DSZ15DZMOD, DSZ16 or WSZ16 energy meter over Modbus."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "eltako-modbus contributors" }]
-keywords = ["modbus", "eltako", "dsz15dzmod", "energy-meter", "home-assistant"]
+keywords = [
+    "modbus",
+    "eltako",
+    "dsz15dzmod",
+    "dsz16",
+    "wsz16",
+    "energy-meter",
+    "home-assistant",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Home Automation",
