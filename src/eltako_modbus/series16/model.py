@@ -32,12 +32,10 @@ def power(address: int, *, unit: str) -> NumberField[int]:
     """A signed power measurement in whole W, VA or var, as the Remarks state.
 
     "Power is a signed number without decimal", so the raw value is the value.
-    Note that this contradicts the DSZ15DZMOD's own datasheet, which gives the
-    same register a unit of kW; V3.7.4 says W for that model too. It also
-    settles nothing about apparent and reactive power: the Remarks name only
-    "power", and this models VA and var by the same rule, which is what the
-    unit column and the missing decimals together imply — but the spec never
-    says so, and only hardware could.
+    This settles nothing about apparent and reactive power: the Remarks name
+    only "power", and this models VA and var by the same rule, which is what
+    the unit column and the missing decimals together imply — but the spec
+    never says so, and only hardware could.
     """
     return int32(address, unit=unit)
 

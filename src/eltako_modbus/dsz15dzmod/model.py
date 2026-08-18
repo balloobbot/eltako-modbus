@@ -18,20 +18,17 @@ def scaled(address: int, *, unit: str) -> NumberField[float]:
 
 
 def power(address: int) -> NumberField[int]:
-    """A signed active-power measurement, in whole kW as the spec states.
+    """A signed active-power measurement, in whole W.
 
-    The spec gives power a unit of kW, signed, and — alone among the
-    measurements — *no* decimals, which makes the step 1 kW. That is hard to
-    believe from a meter that reports *energy* to two decimals, 10 Wh: the same
-    device would resolve accumulated energy a hundred thousand times finer than
-    the power producing it. The likeliest explanation is that the raw value is
-    watts and the unit column is wrong — Eltako's later V3.7.4 specification
-    gives this meter's own register a unit of W — but this meter's datasheet
-    says what it says, and nothing here can settle it without hardware. So this
-    models the datasheet exactly and hands back the raw integer unscaled; a
-    consumer that measures otherwise can divide. See the README.
+    The V1.6 datasheet gives power a unit of kW, signed, and alone among the
+    measurements *no* decimals, which would make the step 1 kW on a meter that
+    resolves accumulated energy to 10 Wh. Eltako's V3.7.4 specification is a
+    later revision of this same document (its own title names the DSZ15DZMOD,
+    05/2026 against 06/2023) and gives this meter's register a unit of W, which
+    is the reading the energy resolution always implied. The raw integer is
+    returned unscaled either way; only the label changes.
     """
-    return int32(address, unit="kW")
+    return int32(address, unit="W")
 
 
 def power_factor(address: int) -> NumberField[float]:

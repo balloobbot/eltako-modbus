@@ -210,15 +210,6 @@ Both documents describe the DSZ15DZMOD, and they contradict each other on three
 points. Each model follows **its own** document; nothing is silently
 reconciled.
 
-**The unit of power.** The DSZ15DZMOD datasheet says kW; V3.7.4 says W, for
-that meter as well as the other six. The decoded number is the same raw signed
-integer either way — only the unit label differs — so `Dsz15dzmod` still labels
-it kW as its datasheet does, and the DSZ16/WSZ16 models label it W. V3.7.4 is
-the likelier of the two (see the next section), but changing the DSZ15DZMOD
-would change what a consumer's kW reading means by a factor of a thousand, on
-the strength of a document that is not that meter's own. If you have one on the
-bench, measure it and open an issue.
-
 **The baud-rate codes.** The DSZ15DZMOD datasheet numbers them 0=2400, 1=4800,
 2=9600, 3=19200, 5=1200; V3.7.4 numbers them 0=300 through 5=9600 up to
 0x0A=115200. The two tables agree on nothing but the default speed. There are
@@ -233,16 +224,15 @@ therefore two `BaudRate` enums: `eltako_modbus.BaudRate` and
 None of these is resolved here — the model follows the document, and each is
 recorded so anyone with a meter on the bench can settle it.
 
-**Active power may be watts, not kW (DSZ15DZMOD).** Its datasheet gives active
-power a unit of kW, signed, and — alone among the measurements — no decimals.
-That makes the step 1 kW, which is hard to believe from a meter that reports
-*energy* to two decimals (10 Wh): the same device would resolve accumulated
-energy a hundred thousand times more finely than the power producing it. V3.7.4
-gives the same register a unit of W, which is what one would expect. The
-library does **not** guess: `active_power_l1`, `active_power_l2`,
-`active_power_l3` and `total_active_power` hand back the raw signed integer
-unscaled, labelled kW as that datasheet labels it. If you measure otherwise,
-divide — and please open an issue with what you saw.
+**Active power is watts, not kW (DSZ15DZMOD).** The V1.6 datasheet gives active
+power a unit of kW, signed, and alone among the measurements no decimals. That
+would make the step 1 kW on a meter that reports *energy* to 10 Wh, resolving
+accumulated energy a hundred thousand times more finely than the power
+producing it. V3.7.4 gives the same register a unit of W, and it is a later
+revision of the same document rather than a different meter's: its own title
+names the DSZ15DZMOD, dated 05/2026 against V1.6's 06/2023. So `Dsz15dzmod`
+labels these W. The decoded number never changed — the raw signed integer is
+returned unscaled either way — but a consumer reading the unit now gets watts.
 
 **Apparent and reactive power are modelled by the power rule.** V3.7.4's
 Remarks say "power is a signed number without decimal" and name no other
