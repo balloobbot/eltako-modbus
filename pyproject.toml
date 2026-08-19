@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "eltako-modbus"
 version = "0.1.0"
-description = "Read an Eltako DSZ15DZMOD, DSZ16 or WSZ16 energy meter over Modbus."
+description = "Read Eltako energy meters over Modbus."
 readme = "README.md"
 requires-python = ">=3.12"
 license = { text = "MIT" }
