@@ -23,10 +23,8 @@ counters per tariff and per phase — and one set of components: they differ onl
 in which rows of that map they answer, and in the two decimals of energy the
 transformer-connected pair drops to one. The DSZ15DZMOD has
 `eltako_modbus.dsz15dzmod` to itself, sharing nothing but the packed-BCD serial
-number, because Eltako documents it differently — see
-[Where the two specs disagree](#where-the-two-specs-disagree). Every class is
-re-exported from `eltako_modbus` itself, so neither path is needed in normal
-use.
+number. Every class is re-exported from `eltako_modbus` itself, so neither path
+is needed in normal use.
 
 This is a device library built on
 [modbus-connection](https://github.com/balloob/modbus-connection). It takes a
@@ -203,20 +201,11 @@ three, and power is signed with none. V3.7.4 adds that the DSZ16WD and DSZ16WDZ
 keep only one decimal of energy, which is Note 1 there and `CT_ENERGY_SCALE`
 here.
 
-## Where the two specs disagree
-
-Both documents describe the DSZ15DZMOD, and they contradict each other on three
-points. Each model follows **its own** document; nothing is silently
-reconciled.
-
-**The baud-rate codes.** The DSZ15DZMOD datasheet numbers them 0=2400, 1=4800,
-2=9600, 3=19200, 5=1200; V3.7.4 numbers them 0=300 through 5=9600 up to
-0x0A=115200. The two tables agree on nothing but the default speed. There are
-therefore two `BaudRate` enums: `eltako_modbus.BaudRate` and
-`eltako_modbus.series16.BaudRate`.
-
-**The address range.** The DSZ15DZMOD datasheet allows 1-250, V3.7.4 allows
-1-247. Each model validates writes against its own.
+Each model follows its own document. Where they differ the difference is
+visible in the API: the baud-rate codes are numbered differently, so there are
+two `BaudRate` enums, `eltako_modbus.BaudRate` and
+`eltako_modbus.series16.BaudRate`, and the permitted address range differs, so
+each model validates a write against its own.
 
 ## Where the specs are unclear
 
@@ -241,16 +230,6 @@ it saves: a block that reaches an address the meter refuses fails the entire
 read, not just that point. Until someone measures a meter, the conservative
 plan stands. If you have one on the bench, try a wide read and open an issue.
 
-**Active power is watts, not kW (DSZ15DZMOD).** The V1.6 datasheet gives active
-power a unit of kW, signed, and alone among the measurements no decimals. That
-would make the step 1 kW on a meter that reports *energy* to 10 Wh, resolving
-accumulated energy a hundred thousand times more finely than the power
-producing it. V3.7.4 gives the same register a unit of W, and it is a later
-revision of the same document rather than a different meter's: its own title
-names the DSZ15DZMOD, dated 05/2026 against V1.6's 06/2023. So `Dsz15dzmod`
-labels these W. The decoded number never changed — the raw signed integer is
-returned unscaled either way — but a consumer reading the unit now gets watts.
-
 **Apparent and reactive power are modelled by the power rule.** V3.7.4's
 Remarks say "power is a signed number without decimal" and name no other
 quantity, but they exempt only "power and power factor" from the two-decimal
@@ -268,9 +247,7 @@ specific statement wins: `selected_tariff` decodes 1-4.
 
 **The pulse-mode table contradicts itself (DSZ15DZMOD).** Its §3.2 lists "1
 reverse active, 2 Total active, 2-4 positive active" for 0x0056, giving code 2
-two meanings. `pulse_mode` is therefore a plain integer and not an enum. In
-V3.7.4 that same register is the S0 import pulse width in ms, which the
-DSZ15DZMOD does not have at all.
+two meanings. `pulse_mode` is therefore a plain integer and not an enum.
 
 **Baud-rate code 4 is unassigned (DSZ15DZMOD).** Its datasheet lists 0, 1, 2, 3
 and 5. An unassigned code decodes to `None`.

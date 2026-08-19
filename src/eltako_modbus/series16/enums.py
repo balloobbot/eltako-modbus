@@ -1,9 +1,4 @@
-"""Coded values of the DSZ16/WSZ16 register map (spec §3.1 and §3.2).
-
-The codes differ from the DSZ15DZMOD's own datasheet — the baud-rate table in
-particular — so these are deliberately separate from
-:mod:`eltako_modbus.enums`.
-"""
+"""Coded values of the DSZ16/WSZ16 register map (spec §3.1 and §3.2)."""
 
 from __future__ import annotations
 

@@ -11,9 +11,7 @@ call ``await meter.async_update()``, then read the values as plain attributes::
     meter.measurements.total_export_active_energy
 
 The map is transcribed from *Modbus-RTU protocol specification V3.7.4*
-(05/2026), committed under ``docs/``. Its codes and units differ from the
-DSZ15DZMOD's own datasheet in places, so nothing here is shared with
-:class:`~eltako_modbus.Dsz15dzmod`; the differences are in the README.
+(05/2026), committed under ``docs/``.
 """
 
 from .device import (
