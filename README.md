@@ -2,14 +2,13 @@
 
 Read an **Eltako energy meter** over Modbus.
 
-Eltako publishes two Modbus documents, and this library models both: the
-DSZ15DZMOD's own datasheet, and the *Modbus-RTU protocol specification V3.7.4*
-that covers six further meters. All seven are DIN-rail kWh meters that speak
+Seven DIN-rail kWh meters, single- and three-phase, importing or counting both
+directions, connected directly or through current transformers. They speak
 Modbus RTU on RS-485.
 
 | Class | Meter | Phases | Counts | Notes |
 | --- | --- | --- | --- | --- |
-| `Dsz15dzmod` | DSZ15DZMOD | three | both directions | its own datasheet |
+| `Dsz15dzmod` | DSZ15DZMOD | three | both directions | |
 | `Dsz16d` | DSZ16D | three | import | also sold as DSZ16DE |
 | `Dsz16dz` | DSZ16DZ | three | both directions | also sold as DSZ16DZE |
 | `Dsz16wd` | DSZ16WD | three | import | through current transformers |
@@ -17,14 +16,14 @@ Modbus RTU on RS-485.
 | `Wsz16d` | WSZ16D | one | import | also sold as WSZ16DE |
 | `Wsz16dz` | WSZ16DZ | one | both directions | also sold as WSZ16DZE |
 
-There is a package per specification. The six DSZ16/WSZ16 meters live together
-in `eltako_modbus.series16` because they share one register map — per-phase
-voltage, current, active, apparent and reactive power, power factor and cosφ,
-the totals, frequency, and energy counters per tariff and per phase — and one
-set of components: they differ only in which rows of that map they answer, and
-in the two decimals of energy the transformer-connected pair drops to one. The
-DSZ15DZMOD has `eltako_modbus.dsz15dzmod` to itself, sharing nothing but the
-packed-BCD serial number, because its own datasheet disagrees with V3.7.4 — see
+The six DSZ16/WSZ16 meters live together in `eltako_modbus.series16` because
+they share one register map — per-phase voltage, current, active, apparent and
+reactive power, power factor and cosφ, the totals, frequency, and energy
+counters per tariff and per phase — and one set of components: they differ only
+in which rows of that map they answer, and in the two decimals of energy the
+transformer-connected pair drops to one. The DSZ15DZMOD has
+`eltako_modbus.dsz15dzmod` to itself, sharing nothing but the packed-BCD serial
+number, because Eltako documents it differently — see
 [Where the two specs disagree](#where-the-two-specs-disagree). Every class is
 re-exported from `eltako_modbus` itself, so neither path is needed in normal
 use.
@@ -223,6 +222,24 @@ therefore two `BaudRate` enums: `eltako_modbus.BaudRate` and
 
 None of these is resolved here — the model follows the document, and each is
 recorded so anyone with a meter on the bench can settle it.
+
+**Which addresses a meter will actually answer.** Neither document says which
+address ranges a meter serves, nor whether it answers a read that spans
+registers it does not implement. That is the one unknown here with a
+measurable cost. Only `Identity` declares `register_ranges`; the measurement
+blocks are planned from the gaps between the points a model has, with
+modbus-connection's default `max_gap` of 16, so a hole wider than that splits a
+read even where the meter might have answered across it.
+
+Measured on the mock, a single-phase WSZ16 polls in **three** reads at the
+default and **two** with `max_gap` at 32 or more; the three-phase meters are
+already at two, bounded by the 125-register ceiling on one request rather than
+by any gap. So knowing the true ranges would save one round trip per poll on a
+single-phase meter, and could save more if a meter turns out to answer a read
+spanning the whole map. Getting it wrong in the other direction costs more than
+it saves: a block that reaches an address the meter refuses fails the entire
+read, not just that point. Until someone measures a meter, the conservative
+plan stands. If you have one on the bench, try a wide read and open an issue.
 
 **Active power is watts, not kW (DSZ15DZMOD).** The V1.6 datasheet gives active
 power a unit of kW, signed, and alone among the measurements no decimals. That
